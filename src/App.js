@@ -14,7 +14,7 @@ Coded by www.creative-tim.com
 */
 
 import { useEffect } from "react";
-import Web3 from 'web3';
+//import Web3 from "web3";
 
 // react-router components
 import { Routes, Route, useLocation } from "react-router-dom";
@@ -29,7 +29,7 @@ import theme from "assets/theme";
 // Material Kit 2 PRO React routes
 import Home from "home";
 
-import { abi, address } from './config';
+//import { abi, address } from "./config";
 
 export default function App() {
   const { pathname } = useLocation();
