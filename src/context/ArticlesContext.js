@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { ethers } from "ethers";
-import { contractABI, contractAddress } from "../utils/constants";
+import { contractABI, contractAddress, myAddress } from "../utils/constants";
 
 import Icon from "@mui/material/Icon";
 
