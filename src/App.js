@@ -14,7 +14,6 @@ Coded by www.creative-tim.com
 */
 
 import { useEffect } from "react";
-//import Web3 from "web3";
 
 // react-router components
 import { Routes, Route, useLocation } from "react-router-dom";
@@ -26,10 +25,10 @@ import CssBaseline from "@mui/material/CssBaseline";
 // Material Kit 2 PRO React themes
 import theme from "assets/theme";
 
-// Material Kit 2 PRO React routes
-import Home from "home";
-
-//import { abi, address } from "./config";
+import Home from "pages/Home/home";
+import Article from "pages/Article/article";
+import Articles from "pages/Articles/articles";
+import MintArticle from "pages/Article/create";
 
 export default function App() {
   const { pathname } = useLocation();
@@ -45,6 +44,9 @@ export default function App() {
       <CssBaseline />
       <Routes>
         <Route path="*" element={<Home />} />
+        <Route path="/articles" element={<Articles />} />
+        <Route path="/articles/create" element={<MintArticle />} />
+        <Route path="/articles/:id/view" element={<Article />} />
       </Routes>
     </ThemeProvider>
   );

@@ -12,7 +12,10 @@ Coded by www.creative-tim.com
 
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
+
+import React, { useContext } from "react";
 import ReactMarkdown from "react-markdown";
+import { ArticleContext } from "../../context/ArticlesContext";
 
 // @mui material components
 import Container from "@mui/material/Container";
@@ -27,7 +30,10 @@ import MKButton from "components/MKButton";
 // Images
 import bgImage from "assets/images/pexels-essow-k-936722.jpg";
 
-function Home() {
+function Article() {
+  const { currentAccount } = useContext(ArticleContext);
+
+  console.log(currentAccount);
   return (
     <>
       <MKBox
@@ -117,4 +123,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Article;
