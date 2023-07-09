@@ -3,7 +3,7 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
 // Use describe to group the tests
-const Contract = "ArticlesContract101";
+const Contract = "ArticlesContract105";
 describe(Contract, function () {
   // Declare some variables to store the contract instance and the accounts
   let ArticlesContract;

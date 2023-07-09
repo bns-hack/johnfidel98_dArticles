@@ -3,9 +3,17 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-contract ArticlesContract101 is ERC721 {
+
+contract ArticlesContract105 is ERC721 {
+    // Define an owner address
+    address payable public manager;
+
+    // A counter to generate unique article IDs
+    uint256 public articleCount;
+
     // A struct to store the article and its owner
     struct Article {
+        uint256 id;
         string content;
         address owner;
         string tags; // comma separated
@@ -16,9 +24,6 @@ contract ArticlesContract101 is ERC721 {
 
     // A mapping from article ID to Article struct
     mapping(uint256 => Article) public articles;
-
-    // A counter to generate unique article IDs
-    uint256 public articleCount;
 
     // An event to emit when an article is created
     event ArticleCreated(uint256 indexed articleId, string content, address indexed owner, uint amount);
@@ -36,10 +41,18 @@ contract ArticlesContract101 is ERC721 {
     }
 
     // A constructor to initialize the ERC-721 contract with a name and a symbol
-    constructor() ERC721("Articles", "ART") {}
+    constructor() ERC721("Articles", "ART") {
+        manager = payable(msg.sender); // set the owner to be the deployer of the contract
+    }
+
+    // Define a function to withdraw the ether collected by the contract to the owner address
+    function withdraw() public {
+        require(msg.sender == manager, "Only owner can withdraw"); // check if the caller is the owner
+        manager.transfer(address(this).balance); // send all the ether in the contract to the owner
+    }
 
     // A function to create a new article and assign it to the caller (minting)
-    function createArticle(string memory _content, string memory _tags, uint _amount) public {
+    function createArticle(string memory _content, string memory _tags, uint _amount) public payable {
         // Increment the article count
         articleCount++;
 
@@ -47,13 +60,13 @@ contract ArticlesContract101 is ERC721 {
         uint256 tokenId = articleCount;
 
         // Create a new article struct with the given content and the caller as the owner
-        Article memory newArticle = Article({content: _content, owner: msg.sender, tags: _tags, created: block.timestamp, amount: _amount, exchangeable: false});
+        Article memory newArticle = Article({id: tokenId, content: _content, owner: msg.sender, tags: _tags, created: block.timestamp, amount: _amount, exchangeable: false});
 
         // Store the article in the mapping
         articles[articleCount] = newArticle;
 
         // Mint a new NFT for the article and assign it to the caller
-        _safeMint(msg.sender, tokenId);
+        _mint(msg.sender, tokenId);
 
         // Emit an event
         emit ArticleCreated(articleCount, _content, msg.sender, _amount);

@@ -14,13 +14,13 @@ Coded by www.creative-tim.com
 */
 
 import React, { useRef, useEffect, useContext } from "react";
-import { ArticleContext } from "../../context/ArticlesContext";
 
 // typed-js
 import Typed from "typed.js";
 
 // @mui material components
 import Grid from "@mui/material/Grid";
+import Icon from "@mui/material/Icon";
 import Divider from "@mui/material/Divider";
 
 // Material Kit 2 PRO React components
@@ -30,6 +30,8 @@ import MKTypography from "components/MKTypography";
 import Features from "./features";
 import Layout from "./layout";
 import ArticlesList from "pages/Articles/list";
+
+import { ArticleContext } from "../../context/ArticlesContext";
 
 function Home() {
   const { getMainAction } = useContext(ArticleContext);
@@ -81,7 +83,43 @@ function Home() {
         <>
           <Features />
           <Divider sx={{ margin: 0 }} light={false} />
-          <ArticlesList />
+          <Grid
+            container
+            item
+            xs={12}
+            lg={6}
+            flexDirection="column"
+            justifyContent="center"
+            mx="auto"
+            mt={6}
+          >
+            <MKBox py={2} px={6} textAlign="center">
+              <MKBox
+                width="4rem"
+                height="4rem"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                variant="gradient"
+                bgColor="info"
+                color="white"
+                shadow="md"
+                borderRadius="lg"
+                mx="auto"
+              >
+                <Icon fontSize="medium">person</Icon>
+              </MKBox>
+              <MKTypography variant="h2" mt={2} mb={1}>
+                Latest from our blog?
+              </MKTypography>
+              <MKTypography variant="subtitle1" color="text">
+                Whether you are looking for tips, advice, inspiration, or entertainment, you will
+                find something to suit your interests in these insightful and engaging articles that
+                are written by experts and enthusiasts.
+              </MKTypography>
+            </MKBox>
+          </Grid>
+          <ArticlesList mode="landing" />
           <MKBox
             display="flex"
             justifyContent="space-between"

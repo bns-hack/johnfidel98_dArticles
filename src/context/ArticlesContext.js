@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { ethers } from "ethers";
-import { contractABI, contractAddress, myAddress } from "../utils/constants";
+import { contractABI, contractAddress } from "../utils/constants";
 
 import Icon from "@mui/material/Icon";
 
@@ -47,13 +47,20 @@ export const ArticlesProvider = ({ children }) => {
         const articlesContract = await createEthereumContract();
         const availableArticles = await articlesContract.getAllArticles();
 
-        const sArticles = availableArticles.map((art) => ({
-          owner: art.owner,
-          tags: String(art.tags).split(","),
-          content: art.content,
-          amount: parseInt(art.amount._hex) / 10 ** 18,
-          created: new Date(ethers.toNumber(art.created) * 1000).toLocaleString(),
-        }));
+        const sArticles = availableArticles.map((art) => {
+          const data = JSON.parse(art.content);
+
+          return {
+            id: ethers.toNumber(art.id),
+            owner: art.owner,
+            tags: String(art.tags).split(","),
+            content: data.co,
+            author: data.au,
+            title: data.tx,
+            amount: parseInt(art.amount) / 10 ** 18,
+            created: new Date(ethers.toNumber(art.created) * 1000).toLocaleString(),
+          };
+        });
 
         setArticles(sArticles);
         console.log(sArticles);
@@ -231,6 +238,7 @@ export const ArticlesProvider = ({ children }) => {
         handleChange,
         formData,
         notification,
+        getAllArticles,
         showNotification,
         setShowNotification,
       }}

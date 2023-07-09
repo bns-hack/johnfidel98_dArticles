@@ -43,7 +43,7 @@ function FeaturesInfoCard({ icon, title, description, direction }) {
       <MKTypography display="block" variant="5" fontWeight="bold" mt={2.5} mb={1.5}>
         {title}
       </MKTypography>
-      <MKTypography display="block" variant="body2" color="text">
+      <MKTypography display="block" variant="subtitle2" color="text">
         {description}
       </MKTypography>
     </MKBox>
@@ -90,7 +90,7 @@ function Features() {
           <MKTypography variant="h2" mb={1}>
             Let your writing shine with worth.
           </MKTypography>
-          <MKTypography variant="body1" color="text">
+          <MKTypography variant="subtitle1" color="text">
             Express yourself with confidence and quality, and create writing that has value for
             yourself and others.
           </MKTypography>
