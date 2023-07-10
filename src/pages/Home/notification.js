@@ -14,7 +14,8 @@ import MKButton from "components/MKButton";
 import MKTypography from "components/MKTypography";
 
 const Notification = () => {
-  const { showNotification, setShowNotification, notification } = useContext(ArticleContext);
+  const { showNotification, setShowNotification, notification, buyArticle } =
+    useContext(ArticleContext);
 
   return (
     <Modal
@@ -40,15 +41,24 @@ const Notification = () => {
             <MKTypography variant="h4" color="white" mt={3} mb={1}>
               {notification.title}
             </MKTypography>
-            <MKTypography variant="body2" color="white" opacity={0.8} mb={2}>
+            <MKTypography variant="body1" color="white" opacity={0.8} mb={2} mx={5}>
               {notification.message}
             </MKTypography>
           </MKBox>
           <Divider light sx={{ my: 0 }} />
           <MKBox display="flex" justifyContent="center" py={2} px={1.5}>
-            <MKButton color="white" onClick={() => setShowNotification(false)}>
-              ok, got it!
-            </MKButton>
+            {notification.amount ? (
+              <MKButton
+                color="white"
+                onClick={() => buyArticle(notification.id, String(notification.amount))}
+              >
+                Buy & Own Article
+              </MKButton>
+            ) : (
+              <MKButton color="white" onClick={() => setShowNotification(false)}>
+                ok, got it!
+              </MKButton>
+            )}
           </MKBox>
         </MKBox>
       </Slide>

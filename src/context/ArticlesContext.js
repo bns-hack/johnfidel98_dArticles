@@ -152,25 +152,10 @@ export const ArticlesProvider = ({ children }) => {
         const hydratedContent = JSON.stringify({ tx: title, au: author, co: content, vs: "1.0.0" });
         const articlesContract = await createEthereumContract();
 
-        // request minting payment
-        // await ethereum.request({
-        //   method: "eth_sendTransaction",
-        //   params: [
-        //     {
-        //       from: currentAccount,
-        //       to: myAddress,
-        //       gas: "0x5208",
-        //       value: ethers.toBeHex(ethers.parseEther(amount)),
-        //     },
-        //   ],
-        // });
-
         // send transaction to contract
-        const articleHash = await articlesContract.createArticle(
-          hydratedContent,
-          tags,
-          ethers.toBeHex(ethers.parseEther(amount))
-        );
+        const articleHash = await articlesContract.createArticle(hydratedContent, tags, {
+          value: ethers.parseEther(amount),
+        });
 
         setIsLoading(true);
         await articleHash.wait();
@@ -189,15 +174,15 @@ export const ArticlesProvider = ({ children }) => {
   };
 
   const buyArticle = async (articleId, amount) => {
+    setShowNotification(false);
     try {
       if (ethereum) {
         const articlesContract = await createEthereumContract();
 
         // send transaction to contract
-        const articleHash = await articlesContract.exchangeArticle(
-          articleId,
-          ethers.toBeHex(ethers.parseEther(amount))
-        );
+        const articleHash = await articlesContract.exchangeArticle(articleId, {
+          value: ethers.parseEther(amount),
+        });
 
         setIsLoading(true);
         await articleHash.wait();
@@ -207,7 +192,7 @@ export const ArticlesProvider = ({ children }) => {
         console.log("No ethereum object");
       }
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
     }
     setIsLoading(false);
   };
@@ -295,6 +280,7 @@ export const ArticlesProvider = ({ children }) => {
         handleChange,
         formData,
         notification,
+        setNotification,
         getAllArticles,
         buyArticle,
         showNotification,

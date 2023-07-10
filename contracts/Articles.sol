@@ -4,12 +4,15 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 
-contract ArticlesContract110 is ERC721 {
+contract ArticlesContract120 is ERC721 {
     // Define an owner address
     address payable public manager;
 
     // A counter to generate unique article IDs
     uint256 public articleCount;
+
+    // Define a price for minting NFTs
+    uint256 public constant price = 0.01 ether;
 
     // A struct to store the article and its owner
     struct Article {
@@ -52,7 +55,9 @@ contract ArticlesContract110 is ERC721 {
     }
 
     // A function to create a new article and assign it to the caller (minting)
-    function createArticle(string memory _content, string memory _tags, uint _amount) public payable {
+    function createArticle(string memory _content, string memory _tags) external payable {
+        require(msg.value < price, "Max minting amount is 0.01");
+
         // Increment the article count
         articleCount++;
 
@@ -60,48 +65,43 @@ contract ArticlesContract110 is ERC721 {
         uint256 tokenId = articleCount;
 
         // Create a new article struct with the given content and the caller as the owner
-        Article memory newArticle = Article({id: tokenId, content: _content, owner: msg.sender, tags: _tags, created: block.timestamp, amount: _amount, exchangeable: false});
+        Article memory newArticle = Article({id: tokenId, content: _content, owner: msg.sender, tags: _tags, created: block.timestamp, amount: msg.value, exchangeable: false});
 
         // Store the article in the mapping
         articles[articleCount] = newArticle;
 
-        // Send the mint to the manager
-        manager.transfer(_amount);
-
         // Mint a new NFT for the article and assign it to the caller
-        _mint(msg.sender, tokenId);
+        _safeMint(msg.sender, tokenId);
 
         // Emit an event
-        emit ArticleCreated(articleCount, _content, msg.sender, _amount);
+        emit ArticleCreated(articleCount, _content, msg.sender, msg.value);
     }
 
     // A function to exchange an article with another user
-    function exchangeArticle(uint256 _articleId, uint _newAmount) public payable {
+    function exchangeArticle(uint256 _articleId) public payable {
         // Get the old owner and amount of the article
         address oldOwner = articles[_articleId].owner;
         uint oldAmount = articles[_articleId].amount;
         
         // Check if the new amount is 10% more than the old amount
-        require(_newAmount >= oldAmount * 110 / 100, "Exchange not profitable enough (>10%)");
+        require(msg.value >= oldAmount * 110 / 100, "Exchange not profitable enough (>10%)");
 
         // Check if the article is marked as exchangeable by the owner
         require(articles[_articleId].exchangeable == true, "Article not marked for sale");
 
         // Transfer the ownership and update the amount of the article
         articles[_articleId].owner = msg.sender;
-        articles[_articleId].amount = _newAmount;
+        articles[_articleId].amount = msg.value;
+        articles[_articleId].exchangeable = false;
 
         // Transfer the NFT for the article to the new owner
         _transfer(oldOwner, msg.sender, _articleId);
 
         // Take a fee from the difference between the new and old amounts (10%)
-        uint fee = (_newAmount - oldAmount) / 10;
-
-        // Send the fee to the manager
-        manager.transfer(fee);
+        uint fee = (msg.value - oldAmount) / 10;
 
         // Send the rest of the difference to the old owner
-        payable(oldOwner).transfer(_newAmount - oldAmount - fee);
+        payable(oldOwner).transfer(msg.value - oldAmount - fee);
 
         // Emit an event
         emit ArticleSold(_articleId, oldOwner);

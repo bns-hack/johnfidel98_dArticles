@@ -42,10 +42,10 @@ function Layout({ head, body }) {
       <Notification />
       {isLoading ? (
         <MKBox
-          position="absolute"
+          position="fixed"
           height="-webkit-fill-available"
           width="-webkit-fill-available"
-          zIndex={100}
+          zIndex={10000}
           display="flex"
           alignItems="center"
           textAlign="center"

@@ -2,23 +2,21 @@ kind: Environment
 name: Express / React(Argon) / PostgreSQL boilerplate
 type: primary
 components:
-    -
-        kind: Application
-        name: app
-        gitRepo: 'https://github.com/mfmok/my-templates.git'
-        gitBranch: main
-        gitApplicationPath: components/argon-dashboard-material-ui-main
-        dockerCompose:
-            build:
-                context: .
-                dockerfile: ./Dockerfile
-                target: dev
-            environment:
-                REACT_APP_BASE_API: 'https://{{ components.api.ingress.hosts[0] }}'
-            ports:
-                - '80:8080'
-        hosts:
-            -
-                hostname: 'app-{{ env.base_domain }}'
-                path: /
-                servicePort: 80
+  - kind: Application
+    name: app
+    gitRepo: "https://github.com/mfmok/my-templates.git"
+    gitBranch: main
+    gitApplicationPath: components/argon-dashboard-material-ui-main
+    dockerCompose:
+      build:
+        context: .
+        dockerfile: ./Dockerfile
+        target: dev
+      environment:
+        REACT_APP_BASE_API: "https://{{ components.api.ingress.hosts[0] }}"
+      ports:
+        - "80:8080"
+    hosts:
+      - hostname: "app-{{ env.base_domain }}"
+        path: /
+        servicePort: 80

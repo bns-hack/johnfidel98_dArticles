@@ -3,7 +3,7 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
 // Use describe to group the tests
-const Contract = "ArticlesContract110";
+const Contract = "ArticlesContract120";
 describe(Contract, function () {
   // Declare some variables to store the contract instance and the accounts
   let ArticlesContract;
@@ -29,7 +29,9 @@ describe(Contract, function () {
     // Use it to write a test case
     it("Should create a new article with tags, time, and amount and emit an event", async function () {
       // Call the createArticle function with some content, tags, time, and amount from the owner account
-      await expect(aContract.connect(owner).createArticle("Hello world", "greeting,test", 10))
+      await expect(
+        aContract.connect(owner).createArticle("Hello world", "greeting,test", { value: 10 })
+      )
         .to.emit(aContract, "ArticleCreated") // Expect an ArticleCreated event to be emitted
         .withArgs(1, "Hello world", owner.address, 10); // Expect the event arguments to match the input and the owner address
 
@@ -50,9 +52,9 @@ describe(Contract, function () {
     // Use it to write another test case
     it("Should revert if article not marked for sale", async function () {
       // Call the exchangeArticle function with the article ID 1, alice's address, and a new amount of 10 from bob's account
-      await expect(
-        aContract.connect(alice).exchangeArticle(1, 15)
-      ).to.be.revertedWith("Article not marked for sale"); // Expect the transaction to be reverted with an error message
+      await expect(aContract.connect(alice).exchangeArticle(1, { value: 15 })).to.be.revertedWith(
+        "Article not marked for sale"
+      ); // Expect the transaction to be reverted with an error message
     });
 
     // Use it to write a test case
@@ -71,9 +73,9 @@ describe(Contract, function () {
     // Use it to write a test case
     it("Should sell article to another user, pay fees and emit an event", async function () {
       // Call the exchangeArticle function with the article ID 1 and alice's address from the owner account
-      await expect(aContract.connect(alice).exchangeArticle(1, 15))
+      await expect(aContract.connect(alice).exchangeArticle(1, { value: 15 }))
         .to.emit(aContract, "ArticleSold") // Expect an ArticlesContractd event to be emitted
-        .withArgs(1, owner.address, alice.address); // Expect the event arguments to match the input and the old and new owner addresses
+        .withArgs(1, owner.address); // Expect the event arguments to match the input and the old and new owner addresses
 
       // Call the articles mapping with the article ID 1
       const article = await aContract.articles(1);
@@ -89,7 +91,7 @@ describe(Contract, function () {
     // Use it to write another test case
     it("Should revert if the new amount is less than or equal to the current amount", async function () {
       // Call the exchangeArticle function with the article ID 1, alice's address, and a new amount of 10 from bob's account
-      await expect(aContract.connect(bob).exchangeArticle(1, 10)).to.be.revertedWith(
+      await expect(aContract.connect(bob).exchangeArticle(1, { value: 10 })).to.be.revertedWith(
         "Exchange not profitable enough (>10%)"
       ); // Expect the transaction to be reverted with an error message
     });

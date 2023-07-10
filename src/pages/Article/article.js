@@ -26,6 +26,7 @@ import Grid from "@mui/material/Grid";
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 import MKButton from "components/MKButton";
+import MKBadge from "components/MKBadge";
 
 // Images
 import bgImage from "assets/images/pexels-gdtography-911758.jpg";
@@ -37,15 +38,42 @@ import { ArticleContext } from "../../context/ArticlesContext";
 
 const Article = () => {
   const { articleId } = useParams();
-  const { articlesData, toggleExchangability, buyArticle, currentAccount } =
-    useContext(ArticleContext);
+  const {
+    articlesData,
+    toggleExchangability,
+    currentAccount,
+    setShowNotification,
+    setNotification,
+  } = useContext(ArticleContext);
 
   const article = articlesData[articleId];
+
+  const buyPrice = article.amount + article.amount * 0.1;
+
+  const buyCurrentArticle = () => {
+    setNotification({
+      title: "Buy Article!",
+      message: 'Buy "' + article.title + '" article for ' + buyPrice + " ETH.",
+      amount: buyPrice,
+      id: articleId,
+    });
+    setShowNotification(true);
+  };
+
+  console.log(article);
   return (
     <Layout
       body={
         <Container>
           <Grid container mt={8}>
+            {article.exchangeable ? (
+              <MKBadge
+                badgeContent="Article On Sale"
+                variant="contained"
+                color="success"
+                container
+              />
+            ) : null}
             <MKTypography variant="h2" fontWeight="bold">
               {article.title}
             </MKTypography>
@@ -84,24 +112,24 @@ const Article = () => {
                     <MKButton
                       variant="gradient"
                       size="large"
-                      color="info"
-                      onClick={() => toggleExchangability(articleId, article.exchangeable)}
+                      color={article.exchangeable ? "primary" : "info"}
+                      onClick={() => toggleExchangability(articleId, !article.exchangeable)}
                       sx={{ boxShadow: "none" }}
                     >
                       {article.exchangeable ? "Disable Sale" : "Enable Sale"}
                     </MKButton>
-                  ) : (
+                  ) : article.exchangeable ? (
                     <MKButton
                       variant="gradient"
                       size="large"
                       color="warning"
-                      onClick={() => buyArticle(articleId, 0.012)}
+                      onClick={buyCurrentArticle}
                       fullWidth
                       sx={{ boxShadow: "none" }}
                     >
-                      buy article ({article.amount} ETH)
+                      buy article ({buyPrice} ETH)
                     </MKButton>
-                  )}
+                  ) : null}
                 </MKBox>
               </Grid>
             </Grid>
