@@ -10,6 +10,7 @@ components:
     name: app
     gitRepo: "https://github.com/johnfidel98/dArticles.git"
     gitBranch: main
+    gitApplicationPath: .
     dockerCompose:
       build:
         context: .
