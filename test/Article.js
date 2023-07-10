@@ -3,7 +3,7 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
 // Use describe to group the tests
-const Contract = "ArticlesContract105";
+const Contract = "ArticlesContract110";
 describe(Contract, function () {
   // Declare some variables to store the contract instance and the accounts
   let ArticlesContract;
@@ -51,7 +51,7 @@ describe(Contract, function () {
     it("Should revert if article not marked for sale", async function () {
       // Call the exchangeArticle function with the article ID 1, alice's address, and a new amount of 10 from bob's account
       await expect(
-        aContract.connect(alice).exchangeArticle(1, alice.address, 15)
+        aContract.connect(alice).exchangeArticle(1, 15)
       ).to.be.revertedWith("Article not marked for sale"); // Expect the transaction to be reverted with an error message
     });
 
@@ -71,7 +71,7 @@ describe(Contract, function () {
     // Use it to write a test case
     it("Should sell article to another user, pay fees and emit an event", async function () {
       // Call the exchangeArticle function with the article ID 1 and alice's address from the owner account
-      await expect(aContract.connect(alice).exchangeArticle(1, alice.address, 15))
+      await expect(aContract.connect(alice).exchangeArticle(1, 15))
         .to.emit(aContract, "ArticleSold") // Expect an ArticlesContractd event to be emitted
         .withArgs(1, owner.address, alice.address); // Expect the event arguments to match the input and the old and new owner addresses
 
@@ -89,7 +89,7 @@ describe(Contract, function () {
     // Use it to write another test case
     it("Should revert if the new amount is less than or equal to the current amount", async function () {
       // Call the exchangeArticle function with the article ID 1, alice's address, and a new amount of 10 from bob's account
-      await expect(aContract.connect(bob).exchangeArticle(1, bob.address, 10)).to.be.revertedWith(
+      await expect(aContract.connect(bob).exchangeArticle(1, 10)).to.be.revertedWith(
         "Exchange not profitable enough (>10%)"
       ); // Expect the transaction to be reverted with an error message
     });

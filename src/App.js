@@ -46,7 +46,7 @@ export default function App() {
         <Route path="*" element={<Home />} />
         <Route path="/articles" element={<Articles />} />
         <Route path="/articles/create" element={<MintArticle />} />
-        <Route path="/articles/:id/view" element={<Article />} />
+        <Route path="/articles/:articleId/view" element={<Article />} />
       </Routes>
     </ThemeProvider>
   );

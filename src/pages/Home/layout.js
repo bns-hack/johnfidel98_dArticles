@@ -15,6 +15,7 @@ Coded by www.creative-tim.com
 
 import PropTypes from "prop-types";
 import { useLocation } from "react-router-dom";
+import React, { useContext } from "react";
 
 // @mui material components
 import Container from "@mui/material/Container";
@@ -22,20 +23,44 @@ import Card from "@mui/material/Card";
 
 // Material Kit 2 PRO React components
 import MKBox from "components/MKBox";
+import MKTypography from "components/MKTypography";
+
 import Notification from "pages/Home/notification";
 
 import Footer from "./footer";
 
-// Images
-import bgImage from "assets/images/pexels-essow-k-936722.jpg";
+import bgImage from "assets/images/pexels-gdtography-911758.jpg";
 import Navbar from "./navbar";
+import { ArticleContext } from "../../context/ArticlesContext";
 
 function Layout({ head, body }) {
+  const { isLoading } = useContext(ArticleContext);
   const currentLoc = useLocation();
 
   return (
-    <>
+    <MKBox position="relative">
       <Notification />
+      {isLoading ? (
+        <MKBox
+          position="absolute"
+          height="-webkit-fill-available"
+          width="-webkit-fill-available"
+          zIndex={100}
+          display="flex"
+          alignItems="center"
+          textAlign="center"
+          bgColor={"rgba(255,255,255, 0.8)"}
+        >
+          <MKBox mx={"auto"}>
+            <MKTypography variant="h1" component="h1" color="text">
+              Loading
+            </MKTypography>
+            <MKTypography variant="subtitle1" component="h2" color="text">
+              Kindly wait while we process transactions ...
+            </MKTypography>
+          </MKBox>
+        </MKBox>
+      ) : null}
       <Navbar
         action={{
           type: "internal",
@@ -75,7 +100,7 @@ function Layout({ head, body }) {
         <Container>{body}</Container>
       </Card>
       <Footer />
-    </>
+    </MKBox>
   );
 }
 

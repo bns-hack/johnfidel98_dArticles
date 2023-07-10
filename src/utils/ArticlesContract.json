@@ -1,6 +1,6 @@
 {
   "_format": "hh-sol-artifact-1",
-  "contractName": "ArticlesContract105",
+  "contractName": "ArticlesContract110",
   "sourceName": "contracts/Articles.sol",
   "abi": [
     {
@@ -363,7 +363,7 @@
               "type": "bool"
             }
           ],
-          "internalType": "struct ArticlesContract105.Article[]",
+          "internalType": "struct ArticlesContract110.Article[]",
           "name": "",
           "type": "tuple[]"
         }

@@ -63,7 +63,7 @@ function ArticleCard({ title, description, categories, action }) {
             component={Link}
             to={action.route}
             variant="outlined"
-            size="small"
+            size="medium"
             color={action.color ? action.color : "dark"}
           >
             {action.label}
@@ -102,15 +102,13 @@ ArticleCard.propTypes = {
 };
 
 function ArticlesList({ mode = "page" }) {
-  const { articles } = useContext(ArticleContext);
+  const { articleIds, articlesData } = useContext(ArticleContext);
 
-  let displayArticles = articles,
+  let displayArticles = articleIds,
     smSizing = 6,
     wordLimit = 50;
   if (displayArticles) {
     if (displayArticles.length > 1) {
-      displayArticles = displayArticles.reverse();
-
       if (mode == "landing") {
         displayArticles = displayArticles.slice(0, 5);
         smSizing = 12;
@@ -123,18 +121,20 @@ function ArticlesList({ mode = "page" }) {
     <MKBox component="section" py={3}>
       <Container>
         <Grid container rowSpacing={4} columnSpacing={mode == "page" ? 4 : 0} sx={{ mt: 3 }}>
-          {displayArticles.map((art) => (
-            <Grid key={art.id} item xs={12} sm={smSizing}>
+          {displayArticles.map((artId) => (
+            <Grid key={artId} item xs={12} sm={smSizing}>
               <MKBox mt={3}>
                 <ArticleCard
                   title={
-                    art.title.length > wordLimit ? art.title.slice(0, wordLimit) + "..." : art.title
+                    articlesData[artId].title.length > wordLimit
+                      ? articlesData[artId].title.slice(0, wordLimit) + "..."
+                      : articlesData[artId].title
                   }
-                  description={art.content.slice(0, 200) + "..."}
-                  categories={art.tags}
+                  description={articlesData[artId].content.slice(0, 200) + "..."}
+                  categories={articlesData[artId].tags}
                   action={{
                     type: "internal",
-                    route: "/articles/" + art.id + "/view",
+                    route: "/articles/" + artId + "/view",
                     color: "info",
                     label: "Read Article",
                   }}
@@ -169,7 +169,7 @@ function ArticlesList({ mode = "page" }) {
 
 // Typechecking props for the ArticleCard
 ArticlesList.propTypes = {
-  mode: PropTypes.string.isRequired,
+  mode: PropTypes.string,
 };
 
 export default ArticlesList;

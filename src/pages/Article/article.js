@@ -14,13 +14,13 @@ Coded by www.creative-tim.com
 */
 
 import React, { useContext } from "react";
+import { useParams } from "react-router-dom";
+
+// markdown editor
 import ReactMarkdown from "react-markdown";
-import { ArticleContext } from "../../context/ArticlesContext";
 
 // @mui material components
-import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import Card from "@mui/material/Card";
 
 // Material Kit 2 PRO React components
 import MKBox from "components/MKBox";
@@ -28,68 +28,39 @@ import MKTypography from "components/MKTypography";
 import MKButton from "components/MKButton";
 
 // Images
-import bgImage from "assets/images/pexels-essow-k-936722.jpg";
+import bgImage from "assets/images/pexels-gdtography-911758.jpg";
 
-function Article() {
-  const { currentAccount } = useContext(ArticleContext);
+import Layout from "pages/Home/layout";
+import Container from "@mui/material/Container";
 
-  console.log(currentAccount);
+import { ArticleContext } from "../../context/ArticlesContext";
+
+const Article = () => {
+  const { articleId } = useParams();
+  const { articlesData, toggleExchangability, buyArticle, currentAccount } =
+    useContext(ArticleContext);
+
+  const article = articlesData[articleId];
   return (
-    <>
-      <MKBox
-        minHeight="30vh"
-        width="100%"
-        sx={{
-          backgroundImage: ({ functions: { linearGradient, rgba }, palette: { gradients } }) =>
-            `${linearGradient(
-              rgba(gradients.dark.main, 0.5),
-              rgba(gradients.dark.state, 0.5)
-            )}, url(${bgImage})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          display: "grid",
-          placeItems: "center",
-        }}
-      >
+    <Layout
+      body={
         <Container>
-          <Grid
-            container
-            item
-            xs={12}
-            md={7}
-            justifyContent={{ xs: "center", md: "start" }}
-            sx={{ textAlign: { xs: "center", md: "left" } }}
-          >
-            <MKTypography
-              variant="h1"
-              color="white"
-              sx={({ breakpoints, typography: { size } }) => ({
-                [breakpoints.down("md")]: {
-                  fontSize: size["3xl"],
-                },
-              })}
-            >
-              Article title
+          <Grid container mt={8}>
+            <MKTypography variant="h2" fontWeight="bold">
+              {article.title}
             </MKTypography>
           </Grid>
-          <MKTypography variant="body" color="white" mt={1} xs={12} opacity={0.8}>
-            Article description2
-          </MKTypography>
-        </Container>
-      </MKBox>
-      <Card
-        sx={{
-          p: 2,
-          mx: { xs: 2, lg: 3 },
-          mt: -8,
-          mb: 4,
-          backgroundColor: ({ palette: { white }, functions: { rgba } }) => rgba(white.main, 0.8),
-          backdropFilter: "saturate(200%) blur(30px)",
-          boxShadow: ({ boxShadows: { xxl } }) => xxl,
-        }}
-      >
-        <Container>
-          <ReactMarkdown># Hello, *world*!this is my article</ReactMarkdown>
+          <Grid container mt={3}>
+            <MKTypography variant="h4" fontWeight="bold">
+              By {article.author}
+            </MKTypography>
+          </Grid>
+          <MKBox my={5}>
+            <ReactMarkdown>{article.content}</ReactMarkdown>
+          </MKBox>
+          <Grid container mt={3}>
+            <MKTypography variant="subtitle2">Minted {article.created}</MKTypography>
+          </Grid>
           <MKBox
             display="flex"
             justifyContent="space-between"
@@ -98,29 +69,47 @@ function Article() {
             my={10}
             p={6}
             sx={{
-              backgroundImage:
-                "url(https://images.unsplash.com/photo-1533563906091-fdfdffc3e3c4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1950&q=80)",
+              backgroundImage: `url(${bgImage})`,
             }}
           >
             <Grid container spacing={3} alignItems="center">
               <Grid item xs={12} md={8} lg={5}>
                 <MKTypography variant="h5" color="white" fontWeight="bold">
-                  Liked my article? Sponsor me to write more on category
+                  Enjoyed my article? Buy and own it. Trade later for profit.
                 </MKTypography>
               </Grid>
               <Grid item xs={12} lg={6} sx={{ ml: "auto" }}>
                 <MKBox width="12rem" ml="auto">
-                  <MKButton variant="gradient" color="warning" fullWidth sx={{ boxShadow: "none" }}>
-                    sponsor me
-                  </MKButton>
+                  {article?.owner.toLowerCase() == currentAccount.toLowerCase() ? (
+                    <MKButton
+                      variant="gradient"
+                      size="large"
+                      color="info"
+                      onClick={() => toggleExchangability(articleId, article.exchangeable)}
+                      sx={{ boxShadow: "none" }}
+                    >
+                      {article.exchangeable ? "Disable Sale" : "Enable Sale"}
+                    </MKButton>
+                  ) : (
+                    <MKButton
+                      variant="gradient"
+                      size="large"
+                      color="warning"
+                      onClick={() => buyArticle(articleId, 0.012)}
+                      fullWidth
+                      sx={{ boxShadow: "none" }}
+                    >
+                      buy article ({article.amount} ETH)
+                    </MKButton>
+                  )}
                 </MKBox>
               </Grid>
             </Grid>
           </MKBox>
         </Container>
-      </Card>
-    </>
+      }
+    />
   );
-}
+};
 
 export default Article;

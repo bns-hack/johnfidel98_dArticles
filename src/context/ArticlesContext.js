@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { ethers } from "ethers";
-import { contractABI, contractAddress, myAddress } from "../utils/constants";
+import { contractABI, contractAddress } from "../utils/constants";
 
 import Icon from "@mui/material/Icon";
 
@@ -26,7 +26,8 @@ export const ArticlesProvider = ({ children }) => {
   const [currentAccount, setCurrentAccount] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [articleCount, setArticleCount] = useState(localStorage.getItem("articleCount"));
-  const [articles, setArticles] = useState([]);
+  const [articleIds, setArticleIds] = useState([]);
+  const [articlesData, setArticlesData] = useState({});
 
   // handle notifications
   const [showNotification, setShowNotification] = useState(false);
@@ -47,23 +48,33 @@ export const ArticlesProvider = ({ children }) => {
         const articlesContract = await createEthereumContract();
         const availableArticles = await articlesContract.getAllArticles();
 
-        const sArticles = availableArticles.map((art) => {
-          const data = JSON.parse(art.content);
+        // build new data
+        let xData = {};
 
-          return {
+        const sArticles = availableArticles.map((art) => {
+          const d = JSON.parse(art.content);
+          const aData = {
             id: ethers.toNumber(art.id),
             owner: art.owner,
             tags: String(art.tags).split(","),
-            content: data.co,
-            author: data.au,
-            title: data.tx,
+            content: d.co,
+            exchangeable: art.exchangeable,
+            author: d.au,
+            title: d.tx,
             amount: parseInt(art.amount) / 10 ** 18,
             created: new Date(ethers.toNumber(art.created) * 1000).toLocaleString(),
           };
+
+          xData[aData.id] = aData;
+
+          return aData.id;
         });
 
-        setArticles(sArticles);
-        console.log(sArticles);
+        // update articles data state
+        setArticlesData(xData);
+
+        // sort articles
+        setArticleIds(sArticles.sort().reverse());
       } else {
         console.log("Ethereum is not present");
       }
@@ -142,17 +153,17 @@ export const ArticlesProvider = ({ children }) => {
         const articlesContract = await createEthereumContract();
 
         // request minting payment
-        await ethereum.request({
-          method: "eth_sendTransaction",
-          params: [
-            {
-              from: currentAccount,
-              to: myAddress,
-              gas: "0x5208",
-              value: ethers.toBeHex(ethers.parseEther(amount)),
-            },
-          ],
-        });
+        // await ethereum.request({
+        //   method: "eth_sendTransaction",
+        //   params: [
+        //     {
+        //       from: currentAccount,
+        //       to: myAddress,
+        //       gas: "0x5208",
+        //       value: ethers.toBeHex(ethers.parseEther(amount)),
+        //     },
+        //   ],
+        // });
 
         // send transaction to contract
         const articleHash = await articlesContract.createArticle(
@@ -163,7 +174,6 @@ export const ArticlesProvider = ({ children }) => {
 
         setIsLoading(true);
         await articleHash.wait();
-        setIsLoading(false);
 
         const articlesCount = await articlesContract.getArticleCount();
 
@@ -175,6 +185,52 @@ export const ArticlesProvider = ({ children }) => {
     } catch (error) {
       console.log(error);
     }
+    setIsLoading(false);
+  };
+
+  const buyArticle = async (articleId, amount) => {
+    try {
+      if (ethereum) {
+        const articlesContract = await createEthereumContract();
+
+        // send transaction to contract
+        const articleHash = await articlesContract.exchangeArticle(
+          articleId,
+          ethers.toBeHex(ethers.parseEther(amount))
+        );
+
+        setIsLoading(true);
+        await articleHash.wait();
+
+        window.location.reload();
+      } else {
+        console.log("No ethereum object");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setIsLoading(false);
+  };
+
+  const toggleExchangability = async (articleId, exchangeable) => {
+    try {
+      if (ethereum) {
+        const articlesContract = await createEthereumContract();
+
+        // send transaction to contract
+        const articleHash = await articlesContract.exchangeableArticle(articleId, exchangeable);
+
+        setIsLoading(true);
+        await articleHash.wait();
+
+        await getAllArticles();
+      } else {
+        console.log("No ethereum object");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -230,17 +286,20 @@ export const ArticlesProvider = ({ children }) => {
       value={{
         articleCount,
         connectWallet,
-        articles,
+        articleIds,
         currentAccount,
         getMainAction,
+        toggleExchangability,
         isLoading,
         mintArticle,
         handleChange,
         formData,
         notification,
         getAllArticles,
+        buyArticle,
         showNotification,
         setShowNotification,
+        articlesData,
       }}
     >
       {children}

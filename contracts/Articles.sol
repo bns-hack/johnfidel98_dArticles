@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 
-contract ArticlesContract105 is ERC721 {
+contract ArticlesContract110 is ERC721 {
     // Define an owner address
     address payable public manager;
 
@@ -29,10 +29,10 @@ contract ArticlesContract105 is ERC721 {
     event ArticleCreated(uint256 indexed articleId, string content, address indexed owner, uint amount);
 
     // An event to emit when an article is exchanged
-    event ArticleSold(uint256 indexed articleId, address indexed oldOwner, address indexed newOwner);
+    event ArticleSold(uint256 indexed articleId, address indexed oldOwner);
 
     // An event to emit when an article is changed
-    event ArticleExchangeable(uint256 indexed articleId, bool newexchangeable);
+    event ArticleExchangeable(uint256 indexed articleId, bool newExchangeable);
 
     // A modifier to check if the caller is the owner of an article
     modifier onlyOwner(uint256 _articleId) {
@@ -65,6 +65,9 @@ contract ArticlesContract105 is ERC721 {
         // Store the article in the mapping
         articles[articleCount] = newArticle;
 
+        // Send the mint to the manager
+        manager.transfer(_amount);
+
         // Mint a new NFT for the article and assign it to the caller
         _mint(msg.sender, tokenId);
 
@@ -73,7 +76,7 @@ contract ArticlesContract105 is ERC721 {
     }
 
     // A function to exchange an article with another user
-    function exchangeArticle(uint256 _articleId, address _newOwner, uint _newAmount) public {
+    function exchangeArticle(uint256 _articleId, uint _newAmount) public payable {
         // Get the old owner and amount of the article
         address oldOwner = articles[_articleId].owner;
         uint oldAmount = articles[_articleId].amount;
@@ -85,23 +88,23 @@ contract ArticlesContract105 is ERC721 {
         require(articles[_articleId].exchangeable == true, "Article not marked for sale");
 
         // Transfer the ownership and update the amount of the article
-        articles[_articleId].owner = _newOwner;
+        articles[_articleId].owner = msg.sender;
         articles[_articleId].amount = _newAmount;
 
         // Transfer the NFT for the article to the new owner
-        _transfer(oldOwner, _newOwner, _articleId);
+        _transfer(oldOwner, msg.sender, _articleId);
 
         // Take a fee from the difference between the new and old amounts (10%)
         uint fee = (_newAmount - oldAmount) / 10;
 
-        // Send the fee to the contract address
-        payable(address(this)).transfer(fee);
+        // Send the fee to the manager
+        manager.transfer(fee);
 
         // Send the rest of the difference to the old owner
         payable(oldOwner).transfer(_newAmount - oldAmount - fee);
 
         // Emit an event
-        emit ArticleSold(_articleId, oldOwner, _newOwner);
+        emit ArticleSold(_articleId, oldOwner);
     }
 
     // A function to change the content of an article
