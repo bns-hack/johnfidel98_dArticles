@@ -6,7 +6,7 @@ This is a simple decentralized blogging platform where you can allow your users 
 
 1. Open bunnyshell and add this repo in custom templates.
 2. Change your environment settings.
-3. Use template to deploy the stack.
+3. Use template to deploy this stack.
 
 ## Bunnyshell Stacks
 This repo contains the following reusable app stack templates from [Bunnyshell](https://www.bunnyshell.com/). 
