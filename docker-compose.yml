@@ -1,0 +1,38 @@
+version: '3.1'
+
+services:
+  app:
+    build: 
+      dockerfile: Dockerfile
+    container_name: app-darticles
+    env_file:
+      - .env
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    networks:
+      - net
+  
+  proxy:
+    depends_on:
+      - app
+    build: 
+      dockerfile: nginx/Dockerfile
+      args:
+        - DA_HOST=app
+    container_name: proxy-darticles
+    restart: unless-stopped
+    ports:
+      - 80:80
+    links:
+      - app
+    networks:
+      - net
+    
+
+networks:
+  net:
+    driver: bridge
+
+volumes:
+  nginx_data:

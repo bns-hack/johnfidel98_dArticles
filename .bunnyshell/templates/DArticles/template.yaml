@@ -1,9 +1,11 @@
-name: DArticles React(Material Kit 2 PRO)
-description: This is a boilerplate for creating a new web3 application using React. It contains a basic CRUD example to demonstrate how to get started with a simple web3 app that trades articles.
-tags: [react]
-icons: [react]
+name: DArticles - NGINX + Node.js
+description: This is a boilerplate for starting a new web3 blog using NGINX and Node.js. It's a simple web3 app that trades articles.
+tags: [nodejs, nginx]
+icons: [nodejs, nginx]
 stack:
   packages:
-    - name: React
-      version: "18.2.0"
+    - name: Node.js
+      version: "16"
+    - name: NGINX
+      version: "1.15.12"
 discoverable: true

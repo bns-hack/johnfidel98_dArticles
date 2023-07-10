@@ -1,17 +1,19 @@
 kind: Environment
 name: Express / React(Argon) / PostgreSQL boilerplate
 type: primary
+environmentVariables:
+    DB_PASS: 'bns_secret(need-to-change)'
+    DB_ROOT_PASS: 'bns_secret(n33d-to-ch4ng3)'
+    DB_USER: wp
 components:
   - kind: Application
     name: app
-    gitRepo: "https://github.com/mfmok/my-templates.git"
+    gitRepo: "https://github.com/johnfidel98/dArticles.git"
     gitBranch: main
-    gitApplicationPath: components/argon-dashboard-material-ui-main
     dockerCompose:
       build:
         context: .
         dockerfile: ./Dockerfile
-        target: dev
       environment:
         REACT_APP_BASE_API: "https://{{ components.api.ingress.hosts[0] }}"
       ports:
