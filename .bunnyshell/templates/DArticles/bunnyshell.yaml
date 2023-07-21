@@ -7,7 +7,7 @@ components:
     -
         kind: Application
         name: app
-        gitRepo: 'https://github.com/johnfidel98/dArticles.git'
+        gitRepo: 'https://github.com/bns-hack/johnfidel98_dArticles.git'
         gitBranch: main
         gitApplicationPath: /
         dockerCompose:
@@ -22,7 +22,7 @@ components:
     -
         kind: Application
         name: proxy
-        gitRepo: 'https://github.com/johnfidel98/dArticles.git'
+        gitRepo: 'https://github.com/bns-hack/johnfidel98_dArticles.git'
         gitBranch: main
         gitApplicationPath: /
         dockerCompose:
